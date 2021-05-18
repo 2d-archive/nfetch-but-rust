@@ -1,0 +1,6 @@
+# Rust shit
+/target
+
+# Idea Configuration
+/.idea
+*.iml
