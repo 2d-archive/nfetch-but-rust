@@ -1,10 +1,4 @@
-use std::env::var;
-use std::fmt::Debug;
-use std::fs::File;
-use std::io::Read;
-use std::ops::Div;
-
-use colored::Styles;
+use std::{env, fs};
 use sys_info;
 use whoami;
 
@@ -22,37 +16,41 @@ fn main() {
    {white}"Y88888b{black}     {white}""{black}     oP"
      {white}"Y8888o._{black}    _.oP"
        {white}`""Y888boodP""'"#,
-    bold  = "\x1b[1m",
-    black = "\x1b[30m",
-    green = "\x1b[32m",
-    blue  = "\x1b[34m",
-    white = "\x1b[37m",
-    brightRed     = "\x1b[91m",
-    brightYellow  = "\x1b[93m",
-    brightMagenta = "\x1b[95m",
-    brightCyan    = "\x1b[96m",
-    user   = whoami::username(),
-    host   = whoami::hostname(),
-    distro = whoami::distro(),
-    uptime = get_uptime(),
-    wm     = get_wm(),
-    shell  = get_shell(),
-    ram    = get_mem_info())
+           bold = "\x1b[1m",
+           black = "\x1b[30m",
+           green = "\x1b[32m",
+           blue = "\x1b[34m",
+           white = "\x1b[37m",
+           brightRed = "\x1b[91m",
+           brightYellow = "\x1b[93m",
+           brightMagenta = "\x1b[95m",
+           brightCyan = "\x1b[96m",
+           user = whoami::username(),
+           host = whoami::hostname(),
+           distro = whoami::distro(),
+           uptime = get_uptime(),
+           wm = get_wm(),
+           shell = get_shell(),
+           ram = get_mem_info())
 }
 
+///
 /// Returns the window manager of the current user, or none if they don't use one.
+///
 fn get_wm() -> String {
-  return var("DESKTOP_SESSION")
-    .or(var("XDG_SESSION_DESKTOP"))
-    .or(var("XDG_CURRENT_DESKTOP"))
-    .or(var("GDMSESSION"))
+  return env::var("DESKTOP_SESSION")
+    .or(env::var("XDG_SESSION_DESKTOP"))
+    .or(env::var("XDG_CURRENT_DESKTOP"))
+    .or(env::var("GDMSESSION"))
     .unwrap_or(String::from("none"));
 }
 
+///
 /// Returns the current shell that the user is using.
+///
 fn get_shell() -> String {
-  let mut shell = var("SHELL")
-    .or(var("SESSIONNAME"))
+  let mut shell = env::var("SHELL")
+    .or(env::var("SESSIONNAME"))
     .unwrap_or("unknown".to_string());
 
   let os_type = sys_info::os_type();
@@ -71,8 +69,10 @@ fn get_shell() -> String {
 /// Returns a string containing the current uptime.
 ///
 fn get_uptime() -> String {
-  let mut s = String::new();
-  File::open("/proc/uptime").unwrap().read_to_string(&mut s);
+  let s = match fs::read_to_string("/proc/uptime") {
+    Ok(s) => s,
+    Err(_e) => return "unknown".to_string()
+  };
 
   let seconds = s
     .split_whitespace()
