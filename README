@@ -1,0 +1,11 @@
+🌸 welcome to my very quirky and kawaii cli tool!
+
+- Installation
+
+Make sure you have cargo installed ≧◡≦
+
+1. Clone this repo (✿◠‿◠)
+   git clone https://github.com/melike2d/nfetch-but-rust
+
+2. Install nfetch ●‿●
+   cargo install --path .
