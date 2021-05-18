@@ -4,8 +4,12 @@
 
 Make sure you have cargo installed ≧◡≦
 
-1. Clone this repo (✿◠‿◠)
+1. clone this repo (✿◠‿◠)
    git clone https://github.com/melike2d/nfetch-but-rust
 
-2. Install nfetch ●‿●
+2. install nfetch ●‿●
    cargo install --path .
+   
+--------------------------------
+
+original: https://github.com/ya-sach1/nfetch ᵔᴥᵔ
