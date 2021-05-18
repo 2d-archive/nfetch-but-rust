@@ -8,22 +8,8 @@ use colored::Styles;
 use sys_info;
 use whoami;
 
-const DIVIDING_FACTOR: u64 = 1024 * 1024;
-
 fn main() {
-  let mem_info = match sys_info::mem_info() {
-    Ok(info) => {
-      let used = (info.total - info.avail) / 1024;
-      let total = info.total / 1024;
-      format!("{}mb / {}mb", used, total)
-    }
-
-    Err(_err) => "unknown".to_string()
-  };
-
-  println!(r#"
-  	`{bold}
-       {white}_..oo8{black}"""Y8b.._
+  println!(r#"{bold}       {white}_..oo8{black}"""Y8b.._
      {white}.88888888o.{black}    "Yb.
    {white}.d888P""Y8888b{black}      "b
    {white}o88888    88888){black}       "b	{brightMagenta}{user}{white}@{brightMagenta}{host}
@@ -31,27 +17,27 @@ fn main() {
  {white}88888888888888"{black}           8	{green}uptime 	{white}::{green} {uptime}
 {white}(88DWB8888888P{black}             8)	{brightRed}wm 	{white}::{brightRed} {wm}
  {white}8888888888P{black}               8	{brightYellow}shell	{white}::{brightYellow} {shell}
- {white}Y88888888P{black}     {white}ee{black}        .P	{brightCyan}ram {white}	::{brightCyan} {ram}
+ {white}Y88888888P{black}     {white}ee{black}        .P	{brightCyan}ram 	{white}::{brightCyan} {ram}
   {white}Y888888({black}     {white}8888{black}      oP
    {white}"Y88888b{black}     {white}""{black}     oP"
      {white}"Y8888o._{black}    _.oP"
-       {white}\`""Y888boodP""\'"#,
+       {white}`""Y888boodP""'"#,
     bold  = "\x1b[1m",
     black = "\x1b[30m",
     green = "\x1b[32m",
     blue  = "\x1b[34m",
-    white ="\x1b[37m",
-    brightRed     ="\x1b[91m",
-    brightYellow  ="\x1b[93m",
-    brightMagenta ="\x1b[95m",
-    brightCyan    ="\x1b[96m",
+    white = "\x1b[37m",
+    brightRed     = "\x1b[91m",
+    brightYellow  = "\x1b[93m",
+    brightMagenta = "\x1b[95m",
+    brightCyan    = "\x1b[96m",
     user   = whoami::username(),
     host   = whoami::hostname(),
     distro = whoami::distro(),
     uptime = get_uptime(),
     wm     = get_wm(),
     shell  = get_shell(),
-    ram    = mem_info)
+    ram    = get_mem_info())
 }
 
 /// Returns the window manager of the current user, or none if they don't use one.
@@ -81,6 +67,9 @@ fn get_shell() -> String {
   return shell;
 }
 
+///
+/// Returns a string containing the current uptime.
+///
 fn get_uptime() -> String {
   let mut s = String::new();
   File::open("/proc/uptime").unwrap().read_to_string(&mut s);
@@ -103,4 +92,19 @@ fn get_uptime() -> String {
   if m != 0.0 { uptime.push_str(format!("{:1}m", m).as_str()) };
 
   return uptime.trim().to_string();
+}
+
+///
+/// Returns a string display the used / total system memory.
+///
+fn get_mem_info() -> String {
+  return match sys_info::mem_info() {
+    Ok(info) => {
+      let used = (info.total - info.avail) / 1024;
+      let total = info.total / 1024;
+      format!("{}mb / {}mb", used, total)
+    }
+
+    Err(_err) => "unknown".to_string()
+  };
 }
